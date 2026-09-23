@@ -1,0 +1,47 @@
+# Chain-of-Attack (CoA) evaluation harness for TRACE
+# Versions are those of the environment the paper's runs used.
+
+# Core LLM APIs (openai>=1 client API: language_models.VLLMModel, local_toxigen_api)
+openai>=1.0
+anthropic>=0.20.0
+google-generativeai>=0.4.0
+
+# FastChat conversation templates (imported as `fastchat` in judges.py)
+fschat>=0.2.36
+
+# Experiment tracking
+wandb>=0.16.0
+
+# Data / science
+pandas>=2.0.0
+scikit-learn>=1.3.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+openpyxl>=3.1.0
+
+# HTTP / networking
+requests>=2.31.0
+httplib2>=0.22.0
+google-api-python-client>=2.100.0
+
+# Timezone support (used in loggers.py)
+pytz>=2023.3
+
+# Notebook support (optional, for analysis)
+ipykernel>=6.0.0
+
+# Local microservice backends (local_simcse_api.py + local_toxigen_api.py)
+sentence-transformers>=2.2.0
+# uvicorn and fastapi are pulled in transitively by fschat, but listed here for clarity
+uvicorn>=0.20.0
+fastapi>=0.95.0
+
+# HuggingFace local models (optional — only needed if running vicuna/llama locally)
+# Omit these if you only use API-based models (gpt-3.5-turbo, claude, etc.)
+transformers>=4.36.0
+accelerate>=0.25.0
+# torch is NOT pinned here — install the correct variant for your hardware:
+#   CPU-only:  pip install torch --index-url https://download.pytorch.org/whl/cpu
+#   CUDA 11.8: pip install torch --index-url https://download.pytorch.org/whl/cu118
+#   CUDA 12.1: pip install torch --index-url https://download.pytorch.org/whl/cu121

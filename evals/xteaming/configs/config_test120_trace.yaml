@@ -1,0 +1,57 @@
+# X-Teaming vs. TRACE — the paper's setting.
+# 120 behaviors (80 HarmBench + 40 JailbreakBench) x 3 strategies x up to 7 turns.
+# Attacker: Qwen3-32B, temperature 0.3. Target: TRACE, temperature 0. Judge: GPT-4o.
+attacker:
+  provider: "sglang"            # any OpenAI-compatible server (vLLM/SGLang) on this port
+  model: "Qwen/Qwen3-32B"
+  port: 30002
+  temperature: 0.3
+  max_retries: 10
+  max_turns: 7
+  plans_file: './strategies/attack_plans_test120.json'
+  plan_revision: false
+  run_all_strategies: true
+  strategies_per_behavior: 3
+  sets_per_behavior: 1
+  strategies_per_set: 3
+  output_tag: "test120_trace"
+
+target:
+  provider: "sglang"
+  model: "Dipto084/Llama3.1-8B-TRACE"   # or Dipto084/Qwen3-8B-TRACE; must match what vLLM serves
+  port: 30003
+  temperature: 0
+  max_retries: 10
+  max_tokens: 8192                       # STATE + ANSWER; see evals/README.md
+  max_model_len: 16384
+  sft_variant: "state_answer_action"     # in-process TRACE formatting (SFTTargetModel, from the patch).
+                                         # To go through the trace_defense proxy instead: delete this
+                                         # line and set port to the proxy's port (8000).
+
+textgrad:
+  enabled: false
+  provider: "sglang"
+  model: "Qwen/Qwen3-32B"
+  port: 30002
+  temperature: 0
+  max_retries: 10
+  max_turns_per_phase: 4
+
+attack_validation:
+  max_tokens_for_evaluation: 512
+
+multithreading:
+  max_workers: 5
+
+attack_plan_generator:
+  provider: "openai"
+  model: "gpt-4o"
+  temperature: 0.5
+  max_retries: 3
+  behavior_path: "./behaviors/test_120.csv"
+  attack_plan_generation_dir: "./strategies"
+  num_behaviors: 120
+
+evaluation:
+  use_gpt_judge: true
+  judge_model: "gpt-4o"

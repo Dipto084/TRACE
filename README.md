@@ -80,6 +80,8 @@ and `max_model_len 65536`; raise `--max-tokens` to match if your backend allows.
 cover both blocks, since the STATE precedes the answer. Use `--variant over_refusal` for the
 prompt used in the PHTest over-refusal measurement.
 
+For the exact X-Teaming and Chain-of-Attack setups behind the paper's numbers, see [`evals/`](evals/).
+
 ## Use from Python
 
 The helpers the proxy is built on can be used directly. The package is not published to PyPI and
@@ -108,7 +110,7 @@ endpoint.
 
 | Baseline | HF |
 |---|---|
-| Red-Queen-Guard (Llama-3.1-8B-Instruct, DPO) | [`Dipto084/rqg_llama31_8b`](https://huggingface.co/Dipto084/rqg_llama31_8b) |
+| Red-Queen-Guard (Llama-3.1-8B-Instruct, DPO) | [`Dipto084/Llama-3.1-8B-RedQueenGuard`](https://huggingface.co/Dipto084/Llama-3.1-8B-RedQueenGuard) |
 | X-Guard (Llama-3.1-8B-Instruct, XGuard-Train SFT) | [`Dipto084/Llama-3.1-8B-XGuard-merged`](https://huggingface.co/Dipto084/Llama-3.1-8B-XGuard-merged) |
 
 These are ordinary chat models: standard messages, standard chat template, no system prompt.
