@@ -74,30 +74,16 @@ Each response also carries the turn's safety assessment in a non-standard `trace
 (the parsed STATE block), for logging. Client-supplied system messages are dropped — TRACE uses its
 own — and a warning is logged.
 
-Defaults reproduce the paper's attack evaluations: `temperature 0`, and a `max_tokens` budget of
-4096 (raise it with `--max-tokens` if the backend allows; the STATE block precedes the answer, so
-the budget must cover both). Use `--variant over_refusal` for the prompt used in the PHTest
-over-refusal measurement.
+The proxy defaults to `temperature 0`, as in the paper's attack evaluations. Its `max_tokens`
+default is 4096, a conservative value — the evaluations served the target with `max_tokens 8192`
+and `max_model_len 65536`; raise `--max-tokens` to match if your backend allows. The budget has to
+cover both blocks, since the STATE precedes the answer. Use `--variant over_refusal` for the
+prompt used in the PHTest over-refusal measurement.
 
 ## Use from Python
 
-```python
-from trace_defense import TraceModel, Conversation
-
-model = TraceModel(model="Dipto084/Llama3.1-8B-TRACE", base_url="http://localhost:30003/v1")
-conv = Conversation(model)
-
-resp = conv.send("What's the etiquette I should know before visiting temples in Kyoto?")
-print(resp.answer)           # user-facing reply
-print(resp.action)           # "ALLOW" | "CAUTION" | "DECLINE"
-print(resp.jailbreak_score)  # 1-5
-print(resp.state)            # full parsed STATE dict
-```
-
-`Conversation` keeps the history the way the evaluations did — assistant turns hold only the
-answer text. For a stateless call with your own history, use `model.chat(messages)`.
-
-Building blocks, if you want to wire things up yourself:
+The helpers the proxy is built on can be used directly. The package is not published to PyPI and
+has no install step, so run from the repository root (or put it on `PYTHONPATH`):
 
 ```python
 from trace_defense import format_trajectory, load_system_prompt, parse_output
@@ -110,8 +96,13 @@ raw = client.chat.completions.create(model=..., messages=messages, temperature=0
 state, state_text, answer = parse_output(raw)
 ```
 
-See `examples/quickstart.py` for a runnable multi-turn example against either the proxy or the
-backend directly.
+`format_trajectory` produces the `[Turn N]` string the models were trained on, and `parse_output`
+returns `(state, state_text, answer)` — show the user `answer`, and append only `answer` to the
+history for the next turn.
+
+`trace_defense.client` additionally provides `TraceModel` (stateless, takes a full history) and
+`Conversation` (stateful, keeps assistant turns as answer text only) over any OpenAI-compatible
+endpoint.
 
 ## Baselines released with the paper
 
