@@ -75,10 +75,15 @@ Each response also carries the turn's safety assessment in a non-standard `trace
 own — and a warning is logged.
 
 The proxy defaults to `temperature 0`, as in the paper's attack evaluations. Its `max_tokens`
-default is 4096, a conservative value — the evaluations served the target with `max_tokens 8192`
-and `max_model_len 65536`; raise `--max-tokens` to match if your backend allows. The budget has to
-cover both blocks, since the STATE precedes the answer. Use `--variant over_refusal` for the
-prompt used in the PHTest over-refusal measurement.
+default is 4096, a conservative value — the evaluation configs in [`evals/`](evals/) serve the
+target with `max_tokens 8192` and `max_model_len 16384`; raise `--max-tokens` to match if your
+backend allows. The budget has to cover both blocks, since the STATE precedes the answer. Use
+`--variant over_refusal` for the prompt used in the PHTest over-refusal measurement.
+
+The proxy does not stream: `stream: true` is ignored and the full reply is returned in one
+response. Streaming is not possible here by construction, since the STATE block has to be
+generated and stripped before the answer can be handed back. Clients that require SSE need to
+talk to the backend directly and do the formatting themselves (see below).
 
 For the exact X-Teaming and Chain-of-Attack setups behind the paper's numbers, see [`evals/`](evals/).
 
