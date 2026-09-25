@@ -111,6 +111,21 @@ history for the next turn.
 `Conversation` (stateful, keeps assistant turns as answer text only) over any OpenAI-compatible
 endpoint.
 
+## Data
+
+| Dataset | What it is | HF |
+|---|---|---|
+| TRACE RL split | the trajectories and labels the GDPO stage trained on: 5,234 curated + 500 harm-adjacent (plus validation splits), in verl parquet format | [`Dipto084/TRACE_RL_Dataset`](https://huggingface.co/datasets/Dipto084/TRACE_RL_Dataset) |
+
+Each row is one trajectory -- a conversation up to and including the user turn the policy must
+answer -- with the reference safety assessment used to compute the reward: the manipulation cues,
+the jailbreak score (1-5), and the annotated `<STATE>`/`<ANSWER>` target. `evals/README.md`
+describes the evaluation sets; this is the training side.
+
+Access is gated: the data contains multi-turn adversarial conversations pursuing HarmBench and
+JailbreakBench behaviors, so a request form asks what the data will be used for and records
+agreement to use it for safety research only, not to develop attacks, and not to redistribute it.
+
 ## Baselines released with the paper
 
 | Baseline | HF |
